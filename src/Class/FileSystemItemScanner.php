@@ -1,6 +1,6 @@
 <?php
 
-namespace Wexample\PhpFile;
+namespace Wexample\PhpFile\Class;
 
 use UnexpectedValueException;
 use Wexample\PhpFile\Enum\FileSystemItemType;

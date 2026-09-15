@@ -1,6 +1,6 @@
 <?php
 
-namespace Wexample\PhpFile;
+namespace Wexample\PhpFile\Class;
 
 /**
  * Decides which paths a list of patterns takes, in the vocabulary of a
