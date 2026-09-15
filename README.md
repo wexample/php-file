@@ -1,6 +1,6 @@
 # php-file
 
-Version: 1.0.0
+Version: 1.0.1
 
 The repository does not provide any concrete code that could be documented for now.
 
