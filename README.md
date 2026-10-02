@@ -1,6 +1,6 @@
 # php-file
 
-Version: 2.0.1
+Version: 2.0.2
 
 `wexample/php-file` holds the file handling that owes nothing to a framework: reading a tree off the disk, deciding which paths a list of patterns takes, and putting a size into words. It requires PHP alone, so a command-line script, a worker or a Symfony bundle can all reach for it — ../symfony-file is the Symfony wiring built on top of this one.
 
