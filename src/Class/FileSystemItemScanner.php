@@ -26,6 +26,14 @@ class FileSystemItemScanner
     public const KEY_SIZE = 'size';
     public const KEY_TYPE = 'type';
 
+    /**
+     * The root resolved, once found: every entry described asks for it twice
+     * (containment, then its relative path), and a level holds many entries. A
+     * scanner lives for one reading of the tree, so a root moved meanwhile is
+     * met by the next one. A root not found yet is asked again each time.
+     */
+    private ?string $absoluteRootPath = null;
+
     public function __construct(
         protected string $rootPath
     ) {
@@ -33,6 +41,10 @@ class FileSystemItemScanner
 
     public function getAbsoluteRootPath(): string
     {
+        if (null !== $this->absoluteRootPath) {
+            return $this->absoluteRootPath;
+        }
+
         $root = realpath($this->rootPath);
 
         if (false === $root) {
@@ -41,7 +53,7 @@ class FileSystemItemScanner
             );
         }
 
-        return $root;
+        return $this->absoluteRootPath = $root;
     }
 
     /**
@@ -155,7 +167,15 @@ class FileSystemItemScanner
             return null;
         }
 
-        $path = $directory.DIRECTORY_SEPARATOR.basename($relativePath);
+        $name = basename($relativePath);
+
+        // The holder is checked, not the name: `..` would step out of it, to
+        // the directory above the root when the holder is the root itself.
+        if ('.' === $name || '..' === $name) {
+            return null;
+        }
+
+        $path = $directory.DIRECTORY_SEPARATOR.$name;
 
         return is_link($path) || file_exists($path) ? $path : null;
     }

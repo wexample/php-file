@@ -24,6 +24,15 @@ final class PathMatcher
     private array $rules;
 
     /**
+     * Each segment of a rule as the expression it reads as, built once by
+     * `parse()`: a path is checked against every rule, and a tree against
+     * every path, so compiling them on each comparison was most of the work.
+     *
+     * @var array<string, string>
+     */
+    private array $expressions = [];
+
+    /**
      * @param string[] $patterns one rule per entry, in the order they were written
      */
     public function __construct(array $patterns)
@@ -186,7 +195,7 @@ final class PathMatcher
         string $pattern,
         string $segment,
     ): bool {
-        return (bool) preg_match($this->expression($pattern), $segment);
+        return (bool) preg_match($this->expressions[$pattern] ??= $this->expression($pattern), $segment);
     }
 
     private function expression(string $pattern): string
@@ -231,6 +240,10 @@ final class PathMatcher
         }
 
         $segments = explode('/', $pattern);
+
+        foreach ($segments as $segment) {
+            $this->expressions[$segment] ??= $this->expression($segment);
+        }
 
         // A rule naming one segment is about that name wherever it lies, which
         // is what `.gitignore` means by a pattern holding no slash.
